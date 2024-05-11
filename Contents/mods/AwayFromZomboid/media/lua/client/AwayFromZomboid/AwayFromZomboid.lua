@@ -260,6 +260,8 @@ AwayFromZomboid.becomeNotAFK = function()
     AwayFromZomboid.resetAFKTimer()
 end
 
+--- Increment the AFK timer hook for every in-game minute.
+---@return void
 AwayFromZomboid.incrementAFKHook = function()
     if AwayFromZomboid.getIgnoreStaff() then
         local access_level = getAccessLevel()
@@ -284,6 +286,19 @@ AwayFromZomboid.incrementAFKHook = function()
     AwayFromZomboid.previousCheckTime = currentTime
 end
 
+--- Handle manual AFK.
+---@param chatMessage ChatMessage
+---@param tabId number
+---@return void
+AwayFromZomboid.manualAFKHook = function(chatMessage, tabId)
+    if AwayFromZomboid.getAllowManualAFK() then
+        if chatMessage.getText() == "/afk" then
+            AwayFromZomboid.AFKTimer = AwayFromZomboid.getAFKTimeout() - AwayFromZomboid.getManualAFKDelay()
+            AwayFromZomboid.sendChatNotification("You will become AFK in " .. AwayFromZomboid.getManualAFKDelay() .. " seconds.")
+        end
+    end
+end
+
 -- Init
 
 --- Initialize the mod and add event hooks.
@@ -298,6 +313,8 @@ AwayFromZomboid.init = function()
     Events.OnMouseUp.Add(AwayFromZomboid.resetAFKTimer)
 
     Events.EveryOneMinute.Add(AwayFromZomboid.incrementAFKHook)
+
+    Events.OnAddMessage.Add(AwayFromZomboid.manualAFKHook)
 
     AwayFromZomboid.log(AwayFromZomboid.modVersion .. " initialized.")
 end
