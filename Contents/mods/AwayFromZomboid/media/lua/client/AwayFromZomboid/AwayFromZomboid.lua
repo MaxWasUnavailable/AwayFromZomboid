@@ -306,7 +306,11 @@ AwayFromZomboid.manualAFKHook = function(chatMessage, tabId)
 
         if chatMessage:getText() == "afk" and chatMessage:getAuthor() == getPlayer():getUsername() then
             AwayFromZomboid.AFKTimer = AwayFromZomboid.getAFKTimeout() - AwayFromZomboid.getManualAFKDelay()
-            AwayFromZomboid.sendChatNotification("You will become AFK in " .. AwayFromZomboid.getManualAFKDelay() .. " seconds.")
+            if AwayFromZomboid.isAFKTimedOut() then
+                AwayFromZomboid.becomeAFK()
+            else
+                AwayFromZomboid.sendChatNotification("You will become AFK in ~" .. AwayFromZomboid.getManualAFKDelay() .. " seconds.")
+            end
         end
 
         AwayFromZomboid.registerActivityHooks(AwayFromZomboid.resetAFKTimer)
