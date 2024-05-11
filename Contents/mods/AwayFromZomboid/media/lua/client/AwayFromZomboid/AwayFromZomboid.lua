@@ -21,6 +21,8 @@ AwayFromZomboid.AFKTimer = 0
 AwayFromZomboid.previousCheckTime = nil
 --- Whether the player is AFK.
 AwayFromZomboid.isAFK = false
+--- Late addition to the AFKTimer to prevent reset on manual AFK.
+AwayFromZomboid.lateTimerAddition = 0
 
 -- Misc methods
 
@@ -290,7 +292,10 @@ AwayFromZomboid.incrementAFKHook = function()
     local currentTime = os.time()
 
     if AwayFromZomboid.previousCheckTime ~= nil then
-        AwayFromZomboid.incrementAFKTimer(currentTime - AwayFromZomboid.previousCheckTime or currentTime)
+        local delta = currentTime - AwayFromZomboid.previousCheckTime or currentTime
+        delta = delta + AwayFromZomboid.lateTimerAddition
+        AwayFromZomboid.lateTimerAddition = 0
+        AwayFromZomboid.incrementAFKTimer(delta)
     end
 
     AwayFromZomboid.previousCheckTime = currentTime
@@ -305,12 +310,8 @@ AwayFromZomboid.manualAFKHook = function(chatMessage, tabId)
         AwayFromZomboid.deRegisterActivityHooks(AwayFromZomboid.resetAFKTimer)
 
         if chatMessage:getText() == "afk" and chatMessage:getAuthor() == getPlayer():getUsername() then
-            AwayFromZomboid.AFKTimer = AwayFromZomboid.getAFKTimeout() - AwayFromZomboid.getManualAFKDelay()
-            if AwayFromZomboid.isAFKTimedOut() then
-                AwayFromZomboid.becomeAFK()
-            else
-                AwayFromZomboid.sendChatNotification("You will become AFK in ~" .. AwayFromZomboid.getManualAFKDelay() .. " seconds.")
-            end
+            AwayFromZomboid.sendChatNotification("You will become AFK in ~" .. AwayFromZomboid.getManualAFKDelay() .. " seconds.")
+            AwayFromZomboid.lateTimerAddition = AwayFromZomboid.getAFKTimeout() - AwayFromZomboid.getManualAFKDelay()
         end
 
         AwayFromZomboid.registerActivityHooks(AwayFromZomboid.resetAFKTimer)
