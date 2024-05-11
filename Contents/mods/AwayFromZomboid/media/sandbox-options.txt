@@ -1,0 +1,97 @@
+VERSION = 1,
+
+option AwayFromZomboid.AFKTimeout
+{
+    type = integer,
+    default = 300,
+    min = 0,
+    max = 86400,
+
+    page = AwayFromZomboid,
+    translation = AwayFromZomboid_AFKTimeout,
+}
+
+option AwayFromZomboid.AFKKickTimeout
+{
+    type = integer,
+    default = 600,
+    min = 0,
+    max = 86400,
+
+    page = AwayFromZomboid,
+    translation = AwayFromZomboid_AFKKickTimeout,
+}
+
+option AwayFromZomboid.AFKOnPopupMessage
+{
+    type = string,
+    default = You are now AFK.,
+
+    page = AwayFromZomboid,
+    translation = AwayFromZomboid_AFKOnPopupMessage,
+}
+
+option AwayFromZomboid.AFKOffPopupMessage
+{
+    type = string,
+    default = You are no longer AFK.,
+
+    page = AwayFromZomboid,
+    translation = AwayFromZomboid_AFKOffPopupMessage,
+}
+
+option AwayFromZomboid.DoPopup
+{
+    type = boolean,
+    default = true,
+
+    page = AwayFromZomboid,
+    translation = AwayFromZomboid_DoPopup,
+}
+
+option AwayFromZomboid.DoKick
+{
+    type = boolean,
+    default = true,
+
+    page = AwayFromZomboid,
+    translation = AwayFromZomboid_DoKick,
+}
+
+option AwayFromZomboid.AFKZombiesNoAttack
+{
+    type = boolean,
+    default = true,
+
+    page = AwayFromZomboid,
+    translation = AwayFromZomboid_AFKZombiesNoAttack,
+}
+
+option AwayFromZomboid.AllowManualAFK
+{
+    type = boolean,
+    default = true,
+
+    page = AwayFromZomboid,
+    translation = AwayFromZomboid_AllowManualAFK,
+}
+
+option AwayFromZomboid.ManualAFKDelay
+{
+    type = integer,
+    default = 60,
+    min = 0,
+    max = 86400,
+
+    page = AwayFromZomboid,
+    translation = AwayFromZomboid_ManualAFKDelay,
+}
+
+option AwayFromZomboid.DoIgnoreStaff
+{
+    type = boolean,
+    default = true,
+
+    page = AwayFromZomboid,
+    translation = AwayFromZomboid_DoIgnoreStaff,
+}

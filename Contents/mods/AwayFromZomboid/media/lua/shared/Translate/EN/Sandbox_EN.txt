@@ -1,0 +1,33 @@
+Sandbox_EN = {
+	Sandbox_AwayFromZomboid = "AFK Tools",
+
+	Sandbox_AwayFromZomboid_AFKTimeout = "AFK Timeout (seconds)",
+	Sandbox_AwayFromZomboid_AFKTimeout_tooltip = "The amount of time before a player is considered AFK.",
+
+	Sandbox_AwayFromZomboid_AFKKickTimeout = "AFK Kick Timeout (seconds)",
+	Sandbox_AwayFromZomboid_AFKKickTimeout_tooltip = "The amount of time before an AFK player is kicked. (cumulative with AFK Timeout!)",
+
+	Sandbox_AwayFromZomboid_AFKOnPopupMessage = "AFK On Popup Message",
+	Sandbox_AwayFromZomboid_AFKOnPopupMessage_tooltip = "The message that will be displayed when a player is considered AFK.",
+
+	Sandbox_AwayFromZomboid_AFKOffPopupMessage = "AFK Off Popup Message",
+	Sandbox_AwayFromZomboid_AFKOffPopupMessage_tooltip = "The message that will be displayed when a player is no longer considered AFK.",
+
+	Sandbox_AwayFromZomboid_DoPopup = "Do Popup",
+	Sandbox_AwayFromZomboid_DoPopup_tooltip = "Display a popup when a player is (or is no longer) AFK.",
+
+	Sandbox_AwayFromZomboid_DoKick = "Do Kick",
+	Sandbox_AwayFromZomboid_DoKick_tooltip = "Kick the player when they are AFK, after the additional AFK kick timeout.",
+
+	Sandbox_AwayFromZomboid_AFKZombiesNoAttack = "AFK Zombies No Attack",
+	Sandbox_AwayFromZomboid_AFKZombiesNoAttack_tooltip = "Whether zombies will ignore AFK players.",
+
+	Sandbox_AwayFromZomboid_AllowManualAFK = "Allow Manual AFK",
+	Sandbox_AwayFromZomboid_AllowManualAFK_tooltip = "Allow players to manually set themselves as AFK.",
+
+	Sandbox_AwayFromZomboid_ManualAFKDelay = "Manual AFK Delay (seconds)",
+	Sandbox_AwayFromZomboid_ManualAFKDelay_tooltip = "The amount of time before a player is considered AFK when they manually set themselves as AFK (to prevent abuse).",
+
+	Sandbox_AwayFromZomboid_DoIgnoreStaff = "Ignore Staff",
+	Sandbox_AwayFromZomboid_DoIgnoreStaff_tooltip = "Whether staff accounts are ignored by the AFK system."
+}
