@@ -1,5 +1,5 @@
 Sandbox_EN = {
-	Sandbox_AwayFromZomboid = "AFK Tools",
+	Sandbox_AwayFromZomboid = "Away From Zomboid",
 
 	Sandbox_AwayFromZomboid_AFKTimeout = "AFK Timeout (seconds)",
 	Sandbox_AwayFromZomboid_AFKTimeout_tooltip = "The amount of time before a player is considered AFK.",
