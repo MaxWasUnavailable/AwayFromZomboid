@@ -242,12 +242,16 @@ AwayFromZomboid.becomeAFK = function()
     if AwayFromZomboid.getAFKZombiesNoAttack() then
         getPlayer():setZombiesDontAttack(true)
     end
+
+    AwayFromZomboid.registerActivityHooks(AwayFromZomboid.becomeNotAFK)
 end
 
 --- Handle becoming not AFK.
 ---@return void
 AwayFromZomboid.becomeNotAFK = function()
     AwayFromZomboid.isAFK = false
+
+    AwayFromZomboid.deRegisterActivityHooks(AwayFromZomboid.becomeNotAFK)
 
     if AwayFromZomboid.getDoPopup() then
         AwayFromZomboid.AFKOffPopup()
@@ -292,11 +296,31 @@ end
 ---@return void
 AwayFromZomboid.manualAFKHook = function(chatMessage, tabId)
     if AwayFromZomboid.getAllowManualAFK() then
+        AwayFromZomboid.deRegisterActivityHooks(AwayFromZomboid.resetAFKTimer)
+
         if chatMessage:getText() == "afk" and chatMessage:getAuthor() == getPlayer():getUsername() then
             AwayFromZomboid.AFKTimer = AwayFromZomboid.getAFKTimeout() - AwayFromZomboid.getManualAFKDelay()
             AwayFromZomboid.sendChatNotification("You will become AFK in " .. AwayFromZomboid.getManualAFKDelay() .. " seconds.")
         end
+
+        AwayFromZomboid.registerActivityHooks(AwayFromZomboid.resetAFKTimer)
     end
+end
+
+--- Register the reset hooks.
+AwayFromZomboid.registerActivityHooks = function(method)
+    Events.OnCustomUIKeyPressed.Add(method)
+    Events.OnKeyPressed.Add(method)
+    Events.OnMouseDown.Add(method)
+    Events.OnMouseUp.Add(method)
+end
+
+--- Remove the reset hooks.
+AwayFromZomboid.deRegisterActivityHooks = function(method)
+    Events.OnCustomUIKeyPressed.Remove(method)
+    Events.OnKeyPressed.Remove(method)
+    Events.OnMouseDown.Remove(method)
+    Events.OnMouseUp.Remove(method)
 end
 
 -- Init
@@ -307,10 +331,7 @@ AwayFromZomboid.init = function()
     AwayFromZomboid.resetAFKTimer()
     AwayFromZomboid.isAFK = false
 
-    Events.OnCustomUIKeyPressed.Add(AwayFromZomboid.resetAFKTimer)
-    Events.OnKeyPressed.Add(AwayFromZomboid.resetAFKTimer)
-    Events.OnMouseDown.Add(AwayFromZomboid.resetAFKTimer)
-    Events.OnMouseUp.Add(AwayFromZomboid.resetAFKTimer)
+    AwayFromZomboid.registerActivityHooks(AwayFromZomboid.resetAFKTimer)
 
     Events.EveryOneMinute.Add(AwayFromZomboid.incrementAFKHook)
 
