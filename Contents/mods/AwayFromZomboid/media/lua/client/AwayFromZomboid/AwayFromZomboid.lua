@@ -181,6 +181,7 @@ end
 --- Reset the AFK timer.
 AwayFromZomboid.resetAFKTimer = function()
     AwayFromZomboid.AFKTimer = 0
+    AwayFromZomboid.previousCheckTime = nil
 end
 
 --- Increment the AFK timer.
@@ -199,8 +200,6 @@ AwayFromZomboid.incrementAFKTimer = function(delta)
         end
     else
         if AwayFromZomboid.isAFK == true then
-            -- Failsafe in case the player is not AFK but the mod thinks they are
-            AwayFromZomboid.log("Failsafe: Player is not AFK but the mod thinks they are.")
             AwayFromZomboid.becomeNotAFK()
         end
     end
@@ -264,14 +263,14 @@ end
 AwayFromZomboid.incrementAFKHook = function()
     if AwayFromZomboid.getIgnoreStaff() then
         local access_level = getAccessLevel()
-        if access_level ~= nil and access_level ~= "" and access_level ~= "none" then   -- Access level for none seems atypical compared to other access levels
+        if access_level ~= nil and access_level ~= "" and access_level ~= "none" then
+            -- Access level for none seems atypical compared to other access levels
             AwayFromZomboid.resetAFKTimer()
             return
         end
     end
 
     if AwayFromZomboid.isMultiplayerClient() == false then
-        AwayFromZomboid.log("Skipping check since isMultiplayerClient is " .. AwayFromZomboid.isMultiplayerClient())
         AwayFromZomboid.resetAFKTimer()
         return
     end
@@ -279,7 +278,7 @@ AwayFromZomboid.incrementAFKHook = function()
     local currentTime = os.time()
 
     if AwayFromZomboid.previousCheckTime ~= nil then
-        AwayFromZomboid.incrementAFKTimer(currentTime - AwayFromZomboid.previousCheckTime)
+        AwayFromZomboid.incrementAFKTimer(currentTime - AwayFromZomboid.previousCheckTime or currentTime)
     end
 
     AwayFromZomboid.previousCheckTime = currentTime
@@ -291,13 +290,12 @@ end
 ---@return void
 AwayFromZomboid.init = function()
     AwayFromZomboid.resetAFKTimer()
-    AwayFromZomboid.previousCheckTime = os.time()
     AwayFromZomboid.isAFK = false
 
+    Events.OnCustomUIKeyPressed.Add(AwayFromZomboid.resetAFKTimer)
     Events.OnKeyPressed.Add(AwayFromZomboid.resetAFKTimer)
     Events.OnMouseDown.Add(AwayFromZomboid.resetAFKTimer)
     Events.OnMouseUp.Add(AwayFromZomboid.resetAFKTimer)
-    Events.OnCustomUIKeyPressed.Add(AwayFromZomboid.resetAFKTimer)
 
     Events.EveryOneMinute.Add(AwayFromZomboid.incrementAFKHook)
 
