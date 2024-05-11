@@ -1,0 +1,97 @@
+VERSION = 1,
+
+option AFKTools.AFKTimeout
+{
+    type = integer,
+    default = 300,
+    min = 0,
+    max = 86400,
+
+    page = AFKTools,
+    translation = AFKTools_AFKTimeout,
+}
+
+option AFKTools.AFKKickTimeout
+{
+    type = integer,
+    default = 600,
+    min = 0,
+    max = 86400,
+
+    page = AFKTools,
+    translation = AFKTools_AFKKickTimeout,
+}
+
+option AFKTools.AFKOnPopupMessage
+{
+    type = string,
+    default = You are now AFK.,
+
+    page = AFKTools,
+    translation = AFKTools_AFKOnPopupMessage,
+}
+
+option AFKTools.AFKOffPopupMessage
+{
+    type = string,
+    default = You are no longer AFK.,
+
+    page = AFKTools,
+    translation = AFKTools_AFKOffPopupMessage,
+}
+
+option AFKTools.DoPopup
+{
+    type = boolean,
+    default = true,
+
+    page = AFKTools,
+    translation = AFKTools_DoPopup,
+}
+
+option AFKTools.DoKick
+{
+    type = boolean,
+    default = true,
+
+    page = AFKTools,
+    translation = AFKTools_DoKick,
+}
+
+option AFKTools.AFKZombiesNoAttack
+{
+    type = boolean,
+    default = true,
+
+    page = AFKTools,
+    translation = AFKTools_AFKZombiesNoAttack,
+}
+
+option AFKTools.AllowManualAFK
+{
+    type = boolean,
+    default = true,
+
+    page = AFKTools,
+    translation = AFKTools_AllowManualAFK,
+}
+
+option AFKTools.ManualAFKDelay
+{
+    type = integer,
+    default = 60,
+    min = 0,
+    max = 86400,
+
+    page = AFKTools,
+    translation = AFKTools_ManualAFKDelay,
+}
+
+option AFKTools.DoIgnoreStaff
+{
+    type = boolean,
+    default = true,
+
+    page = AFKTools,
+    translation = AFKTools_DoIgnoreStaff,
+}
