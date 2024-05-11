@@ -17,7 +17,9 @@ AwayFromZomboid.modDescription = "AwayFromZomboid is a mod that adds AFK detecti
 
 --- The AFK timer in seconds.
 AwayFromZomboid.AFKTimer = 0
+--- The previous check time.
 AwayFromZomboid.previousCheckTime = nil
+--- Whether the player is AFK.
 AwayFromZomboid.isAFK = false
 
 -- Misc methods
@@ -179,12 +181,15 @@ AwayFromZomboid.shouldKick = function()
 end
 
 --- Reset the AFK timer.
+---@return void
 AwayFromZomboid.resetAFKTimer = function()
     AwayFromZomboid.AFKTimer = 0
     AwayFromZomboid.previousCheckTime = nil
 end
 
 --- Increment the AFK timer.
+---@param delta number
+---@return void
 AwayFromZomboid.incrementAFKTimer = function(delta)
     delta = delta or 1
     AwayFromZomboid.AFKTimer = AwayFromZomboid.AFKTimer + delta
@@ -206,6 +211,7 @@ AwayFromZomboid.incrementAFKTimer = function(delta)
 end
 
 --- Disconnect player.
+---@return void
 AwayFromZomboid.disconnectPlayer = function()
     if AwayFromZomboid.isMultiplayerClient() then
         getCore():exitToMenu()
@@ -308,6 +314,8 @@ AwayFromZomboid.manualAFKHook = function(chatMessage, tabId)
 end
 
 --- Register the reset hooks.
+---@param method function
+---@return void
 AwayFromZomboid.registerActivityHooks = function(method)
     Events.OnCustomUIKeyPressed.Add(method)
     Events.OnKeyPressed.Add(method)
@@ -316,6 +324,8 @@ AwayFromZomboid.registerActivityHooks = function(method)
 end
 
 --- Remove the reset hooks.
+---@param method function
+---@return void
 AwayFromZomboid.deRegisterActivityHooks = function(method)
     Events.OnCustomUIKeyPressed.Remove(method)
     Events.OnKeyPressed.Remove(method)
