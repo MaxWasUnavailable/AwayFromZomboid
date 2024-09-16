@@ -223,7 +223,11 @@ end
 --- Popup the AFK message.
 ---@return void
 AwayFromZomboid.AFKOnPopup = function()
-    HaloTextHelper.addText(getPlayer(), AwayFromZomboid.getAFKOnPopupMessage(), HaloTextHelper.getColorRed())
+    -- setHaloNote(param1, param2, param3, param4, param5) -- param1 = text, param2 = r, param3 = g, param4 = b, param5 = duration(in ticks)
+    -- 1 secondo reale ≈ 60 tick
+    -- duration in ticks = seconds * 60
+    getPlayer():setHaloNote(AwayFromZomboid.getAFKOnPopupMessage(), 255, 0, 0, (SandboxVars.AwayFromZomboid.AFKKickTimeout*60)+500)
+    -- HaloTextHelper.addText(getPlayer(), AwayFromZomboid.getAFKOnPopupMessage(), HaloTextHelper.getColorRed())
     local message = AwayFromZomboid.getAFKOnPopupMessage()
     if AwayFromZomboid.getDoKick() then
         message = message .. " (Kick in " .. AwayFromZomboid.getAFKKickTimeout() .. " seconds)"
@@ -234,7 +238,8 @@ end
 --- Popup the not AFK message.
 ---@return void
 AwayFromZomboid.AFKOffPopup = function()
-    HaloTextHelper.addText(getPlayer(), AwayFromZomboid.getAFKOffPopupMessage(), HaloTextHelper.getColorGreen())
+    getPlayer():setHaloNote(AwayFromZomboid.getAFKOffPopupMessage(), 0, 255, 0, 500)
+    -- HaloTextHelper.addText(getPlayer(), AwayFromZomboid.getAFKOffPopupMessage(), HaloTextHelper.getColorGreen())
     AwayFromZomboid.sendChatNotification(AwayFromZomboid.getAFKOffPopupMessage())
 end
 
@@ -307,7 +312,7 @@ end
 ---@return void
 AwayFromZomboid.manualAFKHook = function(chatMessage, tabId)
     if AwayFromZomboid.getAllowManualAFK() then
-        if chatMessage:getText() == "afk" and chatMessage:getAuthor() == getPlayer():getUsername() then
+        if (chatMessage:getText() == "AFK" or chatMessage:getText() == "afk" or chatMessage:getText() == "Afk") and chatMessage:getAuthor() == getPlayer():getUsername() then
             AwayFromZomboid.sendChatNotification("You will become AFK in ~" .. AwayFromZomboid.getManualAFKDelay() .. " seconds.")
             AwayFromZomboid.lateTimerAddition = AwayFromZomboid.getAFKTimeout() - AwayFromZomboid.getManualAFKDelay()
         end
