@@ -359,11 +359,13 @@ end
 -- Init hook
 
 Events.OnCreatePlayer.Add(AwayFromZomboid.init)
-Events.OnCharacterDeath.Add(function (player)
-    AwayFromZomboid.resetAFKTimer()
-    AwayFromZomboid.isAFK = false
-    Events.EveryOneMinute.Remove(AwayFromZomboid.incrementAFKHook)
-    Events.OnAddMessage.Remove(AwayFromZomboid.manualAFKHook)
-    AwayFromZomboid.log(AwayFromZomboid.modVersion .. " Character death.")
+Events.OnPlayerDeath.Add(function (player)
+    if getPlayer():isDead() then
+        AwayFromZomboid.resetAFKTimer()
+        AwayFromZomboid.isAFK = false
+        Events.EveryOneMinute.Remove(AwayFromZomboid.incrementAFKHook)
+        Events.OnAddMessage.Remove(AwayFromZomboid.manualAFKHook)
+        AwayFromZomboid.log(AwayFromZomboid.modVersion .. " Character death.")
+    end
 
 end)
