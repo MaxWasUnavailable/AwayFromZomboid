@@ -390,6 +390,10 @@ end
 AwayFromZomboid.init = function()
     AwayFromZomboid.resetAFKTimer()
     AwayFromZomboid.isAFK = false
+    if AwayFromZomboid.isMultiplayerClient() == false then
+        AwayFromZomboid.log("Mod is not a multiplayer client. Not initializing.")
+        return
+    end
 
     AwayFromZomboid.registerActivityHooks(AwayFromZomboid.resetAFKTimer)
 
