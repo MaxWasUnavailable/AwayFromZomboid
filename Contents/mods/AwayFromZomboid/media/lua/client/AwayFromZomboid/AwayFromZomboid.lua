@@ -388,31 +388,17 @@ end
 --- Initialize the mod and add event hooks.
 ---@return void
 AwayFromZomboid.init = function()
-    AwayFromZomboid.resetAFKTimer()
-    AwayFromZomboid.isAFK = false
     if AwayFromZomboid.isMultiplayerClient() == false then
         AwayFromZomboid.log("Mod is not a multiplayer client. Not initializing.")
         return
     end
 
-    AwayFromZomboid.registerActivityHooks(AwayFromZomboid.resetAFKTimer)
-
-    Events.EveryOneMinute.Add(AwayFromZomboid.incrementAFKHook)
-
-    Events.OnAddMessage.Add(AwayFromZomboid.manualAFKHook)
+    Events.OnCreatePlayer.Add(AwayFromZomboid.activate)
+    Events.OnPlayerDeath.Add(AwayFromZomboid.deactivate)
 
     AwayFromZomboid.log(AwayFromZomboid.modVersion .. " initialized.")
 end
 
 -- Init hook
 
-Events.OnCreatePlayer.Add(AwayFromZomboid.init)
-Events.OnPlayerDeath.Add(function (player)
-    if getPlayer():isDead() then
-        AwayFromZomboid.resetAFKTimer()
-        AwayFromZomboid.isAFK = false
-        Events.EveryOneMinute.Remove(AwayFromZomboid.incrementAFKHook)
-        Events.OnAddMessage.Remove(AwayFromZomboid.manualAFKHook)
-    end
-
-end)
+Events.OnGameStart.Add(AwayFromZomboid.init)
