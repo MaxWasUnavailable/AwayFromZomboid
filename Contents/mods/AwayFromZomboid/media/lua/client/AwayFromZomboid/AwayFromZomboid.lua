@@ -24,6 +24,8 @@ AwayFromZomboid.previousCheckTime = nil
 AwayFromZomboid.isAFK = false
 --- Late addition to the AFKTimer to prevent reset on manual AFK.
 AwayFromZomboid.lateTimerAddition = 0
+--- Flag to check whether the system is active.
+AwayFromZomboid.isActive = false
 
 -- Misc methods
 
@@ -338,6 +340,47 @@ AwayFromZomboid.deRegisterActivityHooks = function(method)
     Events.OnKeyPressed.Remove(method)
     Events.OnMouseDown.Remove(method)
     Events.OnMouseUp.Remove(method)
+end
+
+-- Activate & Deactivate
+
+--- Activate the AFK system.
+---@return void
+AwayFromZomboid.activate = function()
+    if AwayFromZomboid.isActive then
+        AwayFromZomboid.log("AFK system already active.")
+        return
+    end
+
+    AwayFromZomboid.isActive = true
+
+    AwayFromZomboid.resetAFKTimer()
+    AwayFromZomboid.isAFK = false
+
+    AwayFromZomboid.registerActivityHooks(AwayFromZomboid.resetAFKTimer)
+
+    Events.EveryOneMinute.Add(AwayFromZomboid.incrementAFKHook)
+
+    Events.OnAddMessage.Add(AwayFromZomboid.manualAFKHook)
+
+    AwayFromZomboid.log("AFK system activated.")
+end
+
+--- Deactivate the AFK system.
+---@return void
+AwayFromZomboid.deactivate = function()
+    AwayFromZomboid.resetAFKTimer()
+    AwayFromZomboid.isAFK = false
+
+    AwayFromZomboid.deRegisterActivityHooks(AwayFromZomboid.resetAFKTimer)
+
+    Events.EveryOneMinute.Remove(AwayFromZomboid.incrementAFKHook)
+
+    Events.OnAddMessage.Remove(AwayFromZomboid.manualAFKHook)
+
+    AwayFromZomboid.log("AFK system deactivated. (Likely due to player death)")
+
+    AwayFromZomboid.isActive = false
 end
 
 -- Init
