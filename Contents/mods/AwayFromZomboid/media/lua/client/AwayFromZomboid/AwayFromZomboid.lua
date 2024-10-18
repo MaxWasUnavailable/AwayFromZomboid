@@ -225,8 +225,6 @@ end
 --- Popup the AFK message.
 ---@return void
 AwayFromZomboid.AFKOnPopup = function()
-    -- setHaloNote(param1, param2, param3, param4, param5) -- param1 = text, param2 = r, param3 = g, param4 = b, param5 = duration(in ticks)
-    -- duration in ticks = seconds * 60
     getPlayer():setHaloNote(AwayFromZomboid.getAFKOnPopupMessage(), 255, 0, 0, (SandboxVars.AwayFromZomboid.AFKKickTimeout*60)+500)
     local message = AwayFromZomboid.getAFKOnPopupMessage()
     if AwayFromZomboid.getDoKick() then
@@ -368,7 +366,6 @@ Events.OnPlayerDeath.Add(function (player)
         AwayFromZomboid.isAFK = false
         Events.EveryOneMinute.Remove(AwayFromZomboid.incrementAFKHook)
         Events.OnAddMessage.Remove(AwayFromZomboid.manualAFKHook)
-        AwayFromZomboid.log(AwayFromZomboid.modVersion .. " Character death.")
     end
 
 end)
