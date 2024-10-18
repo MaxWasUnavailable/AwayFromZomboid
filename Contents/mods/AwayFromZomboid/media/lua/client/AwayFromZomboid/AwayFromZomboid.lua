@@ -53,7 +53,8 @@ end
 ---@param message string
 ---@return void
 AwayFromZomboid.sendChatNotification = function(message)
-    processGeneralMessage(message)
+    -- processGeneralMessage(message)
+    getPlayer():Say(message)
 end
 
 -- Fetch sandbox vars
@@ -223,7 +224,9 @@ end
 --- Popup the AFK message.
 ---@return void
 AwayFromZomboid.AFKOnPopup = function()
-    HaloTextHelper.addText(getPlayer(), AwayFromZomboid.getAFKOnPopupMessage(), HaloTextHelper.getColorRed())
+    -- setHaloNote(param1, param2, param3, param4, param5) -- param1 = text, param2 = r, param3 = g, param4 = b, param5 = duration(in ticks)
+    -- duration in ticks = seconds * 60
+    getPlayer():setHaloNote(AwayFromZomboid.getAFKOnPopupMessage(), 255, 0, 0, (SandboxVars.AwayFromZomboid.AFKKickTimeout*60)+500)
     local message = AwayFromZomboid.getAFKOnPopupMessage()
     if AwayFromZomboid.getDoKick() then
         message = message .. " (Kick in " .. AwayFromZomboid.getAFKKickTimeout() .. " seconds)"
@@ -234,7 +237,7 @@ end
 --- Popup the not AFK message.
 ---@return void
 AwayFromZomboid.AFKOffPopup = function()
-    HaloTextHelper.addText(getPlayer(), AwayFromZomboid.getAFKOffPopupMessage(), HaloTextHelper.getColorGreen())
+    getPlayer():setHaloNote(AwayFromZomboid.getAFKOffPopupMessage(), 0, 255, 0, 500)
     AwayFromZomboid.sendChatNotification(AwayFromZomboid.getAFKOffPopupMessage())
 end
 
@@ -307,9 +310,13 @@ end
 ---@return void
 AwayFromZomboid.manualAFKHook = function(chatMessage, tabId)
     if AwayFromZomboid.getAllowManualAFK() then
-        if chatMessage:getText() == "afk" and chatMessage:getAuthor() == getPlayer():getUsername() then
-            AwayFromZomboid.sendChatNotification("You will become AFK in ~" .. AwayFromZomboid.getManualAFKDelay() .. " seconds.")
-            AwayFromZomboid.lateTimerAddition = AwayFromZomboid.getAFKTimeout() - AwayFromZomboid.getManualAFKDelay()
+        if chatMessage:getAuthor() == getPlayer():getUsername() then
+            local fullMessage = chatMessage:getText()
+            local extractedMessage = fullMessage:match('"(.-)"')
+            if string.lower(extractedMessage) == "afk." then
+                AwayFromZomboid.sendChatNotification("You will become AFK in ~" .. AwayFromZomboid.getManualAFKDelay() .. " seconds.")
+                AwayFromZomboid.lateTimerAddition = AwayFromZomboid.getAFKTimeout() - AwayFromZomboid.getManualAFKDelay()
+            end
         end
     end
 end
@@ -353,4 +360,14 @@ end
 
 -- Init hook
 
-Events.OnConnected.Add(AwayFromZomboid.init)
+Events.OnCreatePlayer.Add(AwayFromZomboid.init)
+Events.OnPlayerDeath.Add(function (player)
+    if getPlayer():isDead() then
+        AwayFromZomboid.resetAFKTimer()
+        AwayFromZomboid.isAFK = false
+        Events.EveryOneMinute.Remove(AwayFromZomboid.incrementAFKHook)
+        Events.OnAddMessage.Remove(AwayFromZomboid.manualAFKHook)
+        AwayFromZomboid.log(AwayFromZomboid.modVersion .. " Character death.")
+    end
+
+end)
