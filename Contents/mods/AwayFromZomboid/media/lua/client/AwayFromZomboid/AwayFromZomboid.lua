@@ -225,11 +225,11 @@ end
 --- Popup the AFK message.
 ---@return void
 AwayFromZomboid.AFKOnPopup = function()
-    getPlayer():setHaloNote(AwayFromZomboid.getAFKOnPopupMessage(), 255, 0, 0, (SandboxVars.AwayFromZomboid.AFKKickTimeout*60)+500)
     local message = AwayFromZomboid.getAFKOnPopupMessage()
     if AwayFromZomboid.getDoKick() then
         message = message .. " (Kick in " .. AwayFromZomboid.getAFKKickTimeout() .. " seconds)"
     end
+    getPlayer():setHaloNote(AwayFromZomboid.getAFKOnPopupMessage(), 255, 0, 0, (SandboxVars.AwayFromZomboid.AFKKickTimeout*60)+500)
     AwayFromZomboid.sendChatNotification(message)
 end
 
