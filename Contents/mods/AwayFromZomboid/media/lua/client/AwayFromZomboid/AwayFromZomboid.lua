@@ -389,7 +389,7 @@ end
 ---@return void
 AwayFromZomboid.init = function()
     if AwayFromZomboid.isMultiplayerClient() == false then
-        AwayFromZomboid.log("Mod is not a multiplayer client. Not initializing.")
+        AwayFromZomboid.log("Mod is not running on a multiplayer client. Not initializing.")
         return
     end
 
