@@ -11,6 +11,7 @@ AwayFromZomboid = {}
 AwayFromZomboid.modName = "AwayFromZomboid"
 AwayFromZomboid.modVersion = "1.0.0"
 AwayFromZomboid.modAuthor = "Max"
+AwayFromZomboid.additionalCredits = {"Vorshim92"}
 AwayFromZomboid.modDescription = "AwayFromZomboid is a mod that adds AFK detection & management systems."
 
 -- Mod variables
