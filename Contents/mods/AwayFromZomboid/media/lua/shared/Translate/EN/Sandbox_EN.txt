@@ -16,6 +16,13 @@ Sandbox_EN = {
 	Sandbox_AwayFromZomboid_DoPopup = "Do Popup",
 	Sandbox_AwayFromZomboid_DoPopup_tooltip = "Display a popup when a player is (or is no longer) AFK.",
 
+	Sandbox_AwayFromZomboid_ChatNotificationChannel_Enums_option1 = "None",
+	Sandbox_AwayFromZomboid_ChatNotificationChannel_Enums_option2 = "Say",
+	Sandbox_AwayFromZomboid_ChatNotificationChannel_Enums_option3 = "General",
+
+    Sandbox_AwayFromZomboid_ChatNotificationChannel = "Chat Notification Channel",
+    Sandbox_AwayFromZomboid_ChatNotificationChannel_tooltip = "The channel to send chat notifications to, if any.",
+
 	Sandbox_AwayFromZomboid_DoKick = "Do Kick",
 	Sandbox_AwayFromZomboid_DoKick_tooltip = "Kick the player when they are AFK, after the additional AFK kick timeout.",
 

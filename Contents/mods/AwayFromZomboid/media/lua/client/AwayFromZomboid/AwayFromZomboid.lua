@@ -11,6 +11,7 @@ AwayFromZomboid = {}
 AwayFromZomboid.modName = "AwayFromZomboid"
 AwayFromZomboid.modVersion = "1.0.0"
 AwayFromZomboid.modAuthor = "Max"
+AwayFromZomboid.additionalCredits = {"Vorshim92"}
 AwayFromZomboid.modDescription = "AwayFromZomboid is a mod that adds AFK detection & management systems."
 
 -- Mod variables
@@ -23,6 +24,10 @@ AwayFromZomboid.previousCheckTime = nil
 AwayFromZomboid.isAFK = false
 --- Late addition to the AFKTimer to prevent reset on manual AFK.
 AwayFromZomboid.lateTimerAddition = 0
+--- Flag to check whether the system is active.
+AwayFromZomboid.isActive = false
+--- Original OnCommandEntered function
+AwayFromZomboid.originalOnCommandEntered = ISChat.onCommandEntered
 
 -- Misc methods
 
@@ -53,7 +58,18 @@ end
 ---@param message string
 ---@return void
 AwayFromZomboid.sendChatNotification = function(message)
-    processGeneralMessage(message)
+    local chatChannel = AwayFromZomboid.getChatNotificationChannel()
+    if chatChannel == 1 then
+        return
+    end
+    if chatChannel == 2 then
+        processSayMessage(message)
+        return
+    end
+    if chatChannel == 3 then
+        processGeneralMessage(message)
+        return
+    end
 end
 
 -- Fetch sandbox vars
@@ -109,6 +125,17 @@ AwayFromZomboid.getDoPopup = function()
     if value == nil then
         value = true
         AwayFromZomboid.log("AFK Do Popup value not found in sandbox variables. Using default value of " .. tostring(value) .. ".")
+    end
+    return value
+end
+
+--- Get the chat channel to send AFK notifications to.
+---@return number
+AwayFromZomboid.getChatNotificationChannel = function()
+    local value = SandboxVars.AwayFromZomboid.ChatNotificationChannel
+    if value == nil then
+        value = 1
+        AwayFromZomboid.log("Chat Notification Channel value not found in sandbox variables. Using default value of " .. value .. ".")
     end
     return value
 end
@@ -223,18 +250,18 @@ end
 --- Popup the AFK message.
 ---@return void
 AwayFromZomboid.AFKOnPopup = function()
-    HaloTextHelper.addText(getPlayer(), AwayFromZomboid.getAFKOnPopupMessage(), HaloTextHelper.getColorRed())
     local message = AwayFromZomboid.getAFKOnPopupMessage()
     if AwayFromZomboid.getDoKick() then
         message = message .. " (Kick in " .. AwayFromZomboid.getAFKKickTimeout() .. " seconds)"
     end
+    getPlayer():setHaloNote(AwayFromZomboid.getAFKOnPopupMessage(), 255, 0, 0, (SandboxVars.AwayFromZomboid.AFKKickTimeout*60)+500)
     AwayFromZomboid.sendChatNotification(message)
 end
 
 --- Popup the not AFK message.
 ---@return void
 AwayFromZomboid.AFKOffPopup = function()
-    HaloTextHelper.addText(getPlayer(), AwayFromZomboid.getAFKOffPopupMessage(), HaloTextHelper.getColorGreen())
+    getPlayer():setHaloNote(AwayFromZomboid.getAFKOffPopupMessage(), 0, 255, 0, 500)
     AwayFromZomboid.sendChatNotification(AwayFromZomboid.getAFKOffPopupMessage())
 end
 
@@ -301,17 +328,26 @@ AwayFromZomboid.incrementAFKHook = function()
     AwayFromZomboid.previousCheckTime = currentTime
 end
 
---- Handle manual AFK.
----@param chatMessage ChatMessage
----@param tabId number
----@return void
-AwayFromZomboid.manualAFKHook = function(chatMessage, tabId)
-    if AwayFromZomboid.getAllowManualAFK() then
-        if chatMessage:getText() == "afk" and chatMessage:getAuthor() == getPlayer():getUsername() then
-            AwayFromZomboid.sendChatNotification("You will become AFK in ~" .. AwayFromZomboid.getManualAFKDelay() .. " seconds.")
-            AwayFromZomboid.lateTimerAddition = AwayFromZomboid.getAFKTimeout() - AwayFromZomboid.getManualAFKDelay()
-        end
+AwayFromZomboid.customOnCommandEntered = function()
+    local command = ISChat.instance.textEntry:getText();
+    if command:lower() == "/afk" then
+        local message = "You will become AFK in ~" .. AwayFromZomboid.getManualAFKDelay() .. " seconds."
+        AwayFromZomboid.sendChatNotification(message)
+        getPlayer():setHaloNote(message, 255, 255, 0, 500)
+        ISChat.instance:unfocus();
+
+        AwayFromZomboid.lateTimerAddition = AwayFromZomboid.getAFKTimeout() - AwayFromZomboid.getManualAFKDelay()
+        return;
     end
+    AwayFromZomboid.originalOnCommandEntered();
+end
+
+function ISChat:onCommandEntered()
+    if AwayFromZomboid.getAllowManualAFK() and AwayFromZomboid.isActive then
+        AwayFromZomboid.customOnCommandEntered();
+        return;
+    end
+    AwayFromZomboid.originalOnCommandEntered();
 end
 
 --- Register the reset hooks.
@@ -334,11 +370,18 @@ AwayFromZomboid.deRegisterActivityHooks = function(method)
     Events.OnMouseUp.Remove(method)
 end
 
--- Init
+-- Activate & Deactivate
 
---- Initialize the mod and add event hooks.
+--- Activate the AFK system.
 ---@return void
-AwayFromZomboid.init = function()
+AwayFromZomboid.activate = function()
+    if AwayFromZomboid.isActive then
+        AwayFromZomboid.log("AFK system already active.")
+        return
+    end
+
+    AwayFromZomboid.isActive = true
+
     AwayFromZomboid.resetAFKTimer()
     AwayFromZomboid.isAFK = false
 
@@ -346,7 +389,36 @@ AwayFromZomboid.init = function()
 
     Events.EveryOneMinute.Add(AwayFromZomboid.incrementAFKHook)
 
-    Events.OnAddMessage.Add(AwayFromZomboid.manualAFKHook)
+    AwayFromZomboid.log("AFK system activated.")
+end
+
+--- Deactivate the AFK system.
+---@return void
+AwayFromZomboid.deactivate = function()
+    AwayFromZomboid.resetAFKTimer()
+    AwayFromZomboid.isAFK = false
+
+    AwayFromZomboid.deRegisterActivityHooks(AwayFromZomboid.resetAFKTimer)
+
+    Events.EveryOneMinute.Remove(AwayFromZomboid.incrementAFKHook)
+
+    AwayFromZomboid.log("AFK system deactivated. (Likely due to player death)")
+
+    AwayFromZomboid.isActive = false
+end
+
+-- Init
+
+--- Initialize the mod and add event hooks.
+---@return void
+AwayFromZomboid.init = function()
+    if AwayFromZomboid.isMultiplayerClient() == false then
+        AwayFromZomboid.log("Mod is not running on a multiplayer client. Not initializing.")
+        return
+    end
+
+    Events.OnCreatePlayer.Add(AwayFromZomboid.activate)
+    Events.OnPlayerDeath.Add(AwayFromZomboid.deactivate)
 
     AwayFromZomboid.log(AwayFromZomboid.modVersion .. " initialized.")
 end
