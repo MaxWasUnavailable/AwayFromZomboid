@@ -328,23 +328,6 @@ AwayFromZomboid.incrementAFKHook = function()
     AwayFromZomboid.previousCheckTime = currentTime
 end
 
---- Handle manual AFK.
----@param chatMessage ChatMessage
----@param tabId number
----@return void
-AwayFromZomboid.manualAFKHook = function(chatMessage, tabId)
-    if AwayFromZomboid.getAllowManualAFK() then
-        if chatMessage:getAuthor() == getPlayer():getUsername() then
-            local message = chatMessage:getText()
-            if message == nil then
-                return
-            end
-            if message:lower() == "/afk" then
-                AwayFromZomboid.sendChatNotification("You will become AFK in ~" .. AwayFromZomboid.getManualAFKDelay() .. " seconds.")
-                AwayFromZomboid.lateTimerAddition = AwayFromZomboid.getAFKTimeout() - AwayFromZomboid.getManualAFKDelay()
-            end
-        end
-    end
 AwayFromZomboid.customOnCommandEntered = function()
     local command = ISChat.instance.textEntry:getText();
     if command:lower() == "/afk" then
