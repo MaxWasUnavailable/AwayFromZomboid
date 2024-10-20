@@ -56,8 +56,18 @@ end
 ---@param message string
 ---@return void
 AwayFromZomboid.sendChatNotification = function(message)
-    -- processGeneralMessage(message)
-    getPlayer():Say(message)
+    local chatChannel = AwayFromZomboid.getChatNotificationChannel()
+    if chatChannel == 1 then
+        return
+    end
+    if chatChannel == 2 then
+        processSayMessage(message)
+        return
+    end
+    if chatChannel == 3 then
+        processGeneralMessage(message)
+        return
+    end
 end
 
 -- Fetch sandbox vars
@@ -113,6 +123,17 @@ AwayFromZomboid.getDoPopup = function()
     if value == nil then
         value = true
         AwayFromZomboid.log("AFK Do Popup value not found in sandbox variables. Using default value of " .. tostring(value) .. ".")
+    end
+    return value
+end
+
+--- Get the chat channel to send AFK notifications to.
+---@return number
+AwayFromZomboid.getChatNotificationChannel = function()
+    local value = SandboxVars.AwayFromZomboid.ChatNotificationChannel
+    if value == nil then
+        value = 1
+        AwayFromZomboid.log("Chat Notification Channel value not found in sandbox variables. Using default value of " .. value .. ".")
     end
     return value
 end

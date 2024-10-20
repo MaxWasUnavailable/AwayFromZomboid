@@ -49,6 +49,18 @@ option AwayFromZomboid.DoPopup
     translation = AwayFromZomboid_DoPopup,
 }
 
+option AwayFromZomboid.ChatNotificationChannel
+{
+    type = enum,
+    default = 3,
+    numValues = 3,
+
+    valueTranslation = AwayFromZomboid_ChatNotificationChannel_Enums,
+
+    page = AwayFromZomboid,
+    translation = AwayFromZomboid_ChatNotificationChannel,
+}
+
 option AwayFromZomboid.DoKick
 {
     type = boolean,
