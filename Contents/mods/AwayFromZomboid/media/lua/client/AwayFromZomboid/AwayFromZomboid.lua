@@ -401,4 +401,4 @@ end
 
 -- Init hook
 
-Events.OnGameStart.Add(AwayFromZomboid.init)
+Events.OnConnected.Add(AwayFromZomboid.init)
