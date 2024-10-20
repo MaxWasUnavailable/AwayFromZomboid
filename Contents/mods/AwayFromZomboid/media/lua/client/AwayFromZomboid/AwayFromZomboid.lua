@@ -26,6 +26,8 @@ AwayFromZomboid.isAFK = false
 AwayFromZomboid.lateTimerAddition = 0
 --- Flag to check whether the system is active.
 AwayFromZomboid.isActive = false
+--- Original OnCommandEntered function
+AwayFromZomboid.originalOnCommandEntered = ISChat.onCommandEntered
 
 -- Misc methods
 
@@ -343,6 +345,26 @@ AwayFromZomboid.manualAFKHook = function(chatMessage, tabId)
             end
         end
     end
+AwayFromZomboid.customOnCommandEntered = function()
+    local command = ISChat.instance.textEntry:getText();
+    if command:lower() == "/afk" then
+        local message = "You will become AFK in ~" .. AwayFromZomboid.getManualAFKDelay() .. " seconds."
+        AwayFromZomboid.sendChatNotification(message)
+        getPlayer():setHaloNote(message, 255, 255, 0, 500)
+        ISChat.instance:unfocus();
+
+        AwayFromZomboid.lateTimerAddition = AwayFromZomboid.getAFKTimeout() - AwayFromZomboid.getManualAFKDelay()
+        return;
+    end
+    AwayFromZomboid.originalOnCommandEntered();
+end
+
+function ISChat:onCommandEntered()
+    if AwayFromZomboid.getAllowManualAFK() and AwayFromZomboid.isActive then
+        AwayFromZomboid.customOnCommandEntered();
+        return;
+    end
+    AwayFromZomboid.originalOnCommandEntered();
 end
 
 --- Register the reset hooks.
@@ -384,8 +406,6 @@ AwayFromZomboid.activate = function()
 
     Events.EveryOneMinute.Add(AwayFromZomboid.incrementAFKHook)
 
-    Events.OnAddMessage.Add(AwayFromZomboid.manualAFKHook)
-
     AwayFromZomboid.log("AFK system activated.")
 end
 
@@ -398,8 +418,6 @@ AwayFromZomboid.deactivate = function()
     AwayFromZomboid.deRegisterActivityHooks(AwayFromZomboid.resetAFKTimer)
 
     Events.EveryOneMinute.Remove(AwayFromZomboid.incrementAFKHook)
-
-    Events.OnAddMessage.Remove(AwayFromZomboid.manualAFKHook)
 
     AwayFromZomboid.log("AFK system deactivated. (Likely due to player death)")
 
