@@ -312,9 +312,7 @@ end
 AwayFromZomboid.manualAFKHook = function(chatMessage, tabId)
     if AwayFromZomboid.getAllowManualAFK() then
         if chatMessage:getAuthor() == getPlayer():getUsername() then
-            local fullMessage = chatMessage:getText()
-            local extractedMessage = fullMessage:match('"(.-)"')
-            if string.lower(extractedMessage) == "afk." then
+            if string.lower(chatMessage:getText()) == "afk" then
                 AwayFromZomboid.sendChatNotification("You will become AFK in ~" .. AwayFromZomboid.getManualAFKDelay() .. " seconds.")
                 AwayFromZomboid.lateTimerAddition = AwayFromZomboid.getAFKTimeout() - AwayFromZomboid.getManualAFKDelay()
             end
