@@ -427,8 +427,11 @@ end
 
 Events.OnConnected.Add(AwayFromZomboid.init)
 
+-- Joypad support
 
+--- Old onPressButton function.
 local oldOnPressButton = JoypadControllerData.onPressButton
+
 function JoypadControllerData:onPressButton(button)
     oldOnPressButton(self, button)
     if AwayFromZomboid and AwayFromZomboid.isActive then
@@ -439,7 +442,9 @@ function JoypadControllerData:onPressButton(button)
     end
 end
 
+--- Old update function.
 local oldUpdate = JoypadControllerData.update
+
 function JoypadControllerData:update(time)
     oldUpdate(self, time)
     if not self.connected then
