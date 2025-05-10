@@ -426,3 +426,44 @@ end
 -- Init hook
 
 Events.OnConnected.Add(AwayFromZomboid.init)
+
+-- Joypad support
+
+--- Old onPressButton function.
+local oldOnPressButton = JoypadControllerData.onPressButton
+
+function JoypadControllerData:onPressButton(button)
+    oldOnPressButton(self, button)
+    if AwayFromZomboid and AwayFromZomboid.isActive then
+        AwayFromZomboid.resetAFKTimer()
+        if AwayFromZomboid.isAFK == true then
+            AwayFromZomboid.becomeNotAFK()
+        end
+    end
+end
+
+--- Old update function.
+local oldUpdate = JoypadControllerData.update
+
+function JoypadControllerData:update(time)
+    oldUpdate(self, time)
+    if not self.connected then
+        return
+    end
+    if AwayFromZomboid and AwayFromZomboid.isActive then
+        if isJoypadRTPressed(self.id) or isJoypadLTPressed(self.id) then
+            AwayFromZomboid.resetAFKTimer()
+            if AwayFromZomboid.isAFK == true then
+                AwayFromZomboid.becomeNotAFK()
+            end
+        end
+        local axisX = getJoypadMovementAxisX(self.id)
+        local axisY = getJoypadMovementAxisY(self.id)
+        if axisX ~= 0 or axisY ~= 0 then
+            AwayFromZomboid.resetAFKTimer()
+            if AwayFromZomboid.isAFK == true then
+                AwayFromZomboid.becomeNotAFK()
+            end
+        end
+    end
+end
